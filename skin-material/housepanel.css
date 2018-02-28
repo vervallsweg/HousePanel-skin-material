@@ -1298,6 +1298,19 @@ div.switch.rock.off {
     background-image: url('icons/things/rockoff.png');
     background-color: #ababab;
 }
+
+/* doormate apparently  */
+div.contact.mat.open {
+    background-image: url('icons/things/matempty.png');
+    background-color: rgba(27,177,75,0.3);
+    background-size: 120px;
+}
+div.contact.mat.closed {
+    background-image: url('icons/things/matfull.png');
+    background-color: rgba(27,177,75,0.3);
+    background-size: 120px;
+}
+
 div.switch.screen.on, div.switch.screen.off {
     height: 80px;
 }
