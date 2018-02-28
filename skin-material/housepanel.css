@@ -8,7 +8,7 @@
 body {
     color: #000000;
     /*width: 1140px;*/
-    background-image: url(images/materialWallpaper1.jpg);
+    /*background-image: url(images/materialWallpaper1.jpg);*/
     background-size: cover;
     background-repeat: no-repeat;
     min-height: 100vh;
@@ -24,7 +24,7 @@ div.maintable {
     -moz-transform-origin: 0 0;
     -o-transform-origin: 0 0;
     -webkit-transform-origin: 0 0;*/
-    background-color: rgba(0,0,0,0.5);
+    /*background-color: rgba(0,0,0,0.5);*/
     min-height: 100vh;
 }
 h1, h2, h3 {
@@ -39,6 +39,11 @@ div {
 	-moz-background-size: contain;
 	-o-background-size: contain;
 }
+
+:focus {
+    outline: none;
+}
+
 .ui-widget.ui-widget-content{
 /*border-radius: 4px;
 width:100%;
@@ -314,7 +319,7 @@ input {
 div.buttons, form.buttons {
     display: inline;
 }
-input.submitbutton, input.resetbutton, input.authbutton, div.restoretabs, .button-default {
+input.submitbutton, input.resetbutton, input.authbutton, div.restoretabs, div.formbutton, .button-default {
     /* background-color: #3a5795; */
     /* width: 150px; */
     /* height: 50px; */
@@ -735,7 +740,7 @@ div.music {
     /*width: 178px;*/
 }
 div.music.level, div.music.vol {
-    width: 100%;
+    /*width: 100%;*/
 }
 div.music-controls {
     cursor: pointer;
@@ -1558,7 +1563,8 @@ div.weather-thing div.overlay {
 }
 
 /* Styling */
-.overlay.light, .overlay.music, .overlay.music-controls-fixed, .overlay.musicmute, .overlay.bulb, .overlay.thermostat, .overlay.thermofan, .overlay.thermomode, .overlay.thermostate, .overlay.energy, .overlay.power  {
+.overlay.light, .overlay.music, .overlay.music-controls-fixed, .overlay.musicmute, .overlay.bulb, .overlay.thermostat, .overlay.thermofan,
+.overlay.thermomode, .overlay.thermostate, .overlay.energy, .overlay.power, .overlay.level, .overlay.colorTemperature  {
     background-color: white;
     color: #757575;
     padding: 0.25em 0 0 0;
@@ -1656,6 +1662,43 @@ div.switch.power, div.switch.energy {
     padding: 0.25em;
 }
 
+.radioopts {
+    margin: 1em;
+}
+
+.overlay.level, .overlay.colorTemperature {
+    padding: 0 1.5em;
+}
+
+.ui-slider {
+    background: #757575;
+    height: 0.3em;
+    margin: 0 1em;
+}
+
+.ui-slider-handle {
+    background: #757575 !important;
+    border-radius: 50% !important;
+    width: 1.5em !important;
+    height: 1.5em !important;
+}
+
+.slider-icon-container {
+    display: inline-block;
+    width: 20%;
+    overflow: hidden;
+}
+
+.slider-icon-container > i {
+    padding-bottom: 0.5em;
+}
+
+.slider-icon-container ~ .mdc-slider {
+    display: inline-block;
+    width: 65%;
+    margin: 0 10% 0 5%;
+}
+
 /*Fix music playback*/
 .music-controls-fixed > .music-previous {
     background-image: url("icons/sprites/grayPrevious.svg");
@@ -1680,7 +1723,7 @@ div.switch.power, div.switch.energy {
 }
 
 .overlay.music-controls-fixed {
-    padding: 0.75em 0 0 0;
+    padding: 0 0 0.75em 0;
 }
 
 .overlay .musicstatus {
