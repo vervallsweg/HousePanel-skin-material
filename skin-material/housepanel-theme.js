@@ -54,6 +54,10 @@ $.getScript("https://unpkg.com/material-components-web@latest/dist/material-comp
 	if ( Cookies.get('materialKelvinSliderObjects') ) {
 		parseKelvinSliderObjectFromJson( Cookies.get('materialKelvinSliderObjects') );
 	} //Coz we're editing MDC inputs from cookies, mdc stuff needs to be loaded
+
+	if ( Cookies.get('materialMJPEGObjects') ) {
+		parseMJPEGObjectFromJson( Cookies.get('materialMJPEGObjects') );
+	}
 });
 
 $('head').append( $('<link rel="stylesheet" type="text/css" />').attr('href', 'https://fonts.googleapis.com/icon?family=Material+Icons') );
@@ -339,7 +343,7 @@ function addFab() {
 }
 
 function addSettingsDialog() {
-	$('.maintable').append('<aside id="mdc-dialog-with-list" class="mdc-dialog" role="alertdialog" aria-labelledby="mdc-dialog-with-list-label" aria-describedby="mdc-dialog-with-list-description"><div class="mdc-dialog__surface"><section id="mdc-dialog-with-list-description" class="mdc-dialog__body mdc-dialog__body--scrollable"><h3 class="mdc-list-group__subheader" id="settings-dialog-hp">House panel</h3><h3 class="mdc-list-group__subheader" id="settings-dialog-display">Display settings</h3><h3 class="mdc-list-group__subheader" id="settings-dialog-zoom-main">Zoom main view</h3><h3 class="mdc-list-group__subheader" id="settings-dialog-zoom-nav">Zoom nav bar</h3><h3 class="mdc-list-group__subheader" id="settings-dialog-zoom-tiles">Zoom tiles</h3><h3 class="mdc-list-group__subheader" id="settings-dialog-tiles">Tile settings (ids separated by commas)</h3><h3 class="mdc-list-group__subheader" id="settings-dialog-sliders">Tile slider settings</h3><div class="button-default" onclick="createKelvinInput();">+</div><h3 class="mdc-list-group__subheader" id="settings-dialog-wallpaper">Wallpaper</h3><h3 class="mdc-list-group__subheader" id="settings-dialog-version">Version skin-material</h3><p style="margin: 0.75rem 16px;">You are running v'+thisVersion+'. <a href="https://github.com/vervallsweg/HousePanel-skin-material#latest-version">Check for updates.</a></p></section></div><div class="mdc-dialog__backdrop"></div></aside>')
+	$('.maintable').append('<aside id="mdc-dialog-with-list" class="mdc-dialog" role="alertdialog" aria-labelledby="mdc-dialog-with-list-label" aria-describedby="mdc-dialog-with-list-description"><div class="mdc-dialog__surface"><section id="mdc-dialog-with-list-description" class="mdc-dialog__body mdc-dialog__body--scrollable"><h3 class="mdc-list-group__subheader" id="settings-dialog-hp">House panel</h3><h3 class="mdc-list-group__subheader" id="settings-dialog-display">Display settings</h3><h3 class="mdc-list-group__subheader" id="settings-dialog-zoom-main">Zoom main view</h3><h3 class="mdc-list-group__subheader" id="settings-dialog-zoom-nav">Zoom nav bar</h3><h3 class="mdc-list-group__subheader" id="settings-dialog-zoom-tiles">Zoom tiles</h3><h3 class="mdc-list-group__subheader" id="settings-dialog-tiles">Tile settings (ids separated by commas)</h3><h3 class="mdc-list-group__subheader" id="settings-dialog-sliders">Tile slider settings</h3><div class="button-default" onclick="createKelvinInput();">+</div><h3 class="mdc-list-group__subheader" id="settings-dialog-mjpeg">MJPEG camera stream</h3><div class="button-default" onclick="createMJPEGInput();">+</div><h3 class="mdc-list-group__subheader" id="settings-dialog-wallpaper">Wallpaper</h3><h3 class="mdc-list-group__subheader" id="settings-dialog-version">Version skin-material</h3><p style="margin: 0.75rem 16px;">You are running v'+thisVersion+'. <a href="https://github.com/vervallsweg/HousePanel-skin-material#latest-version">Check for updates.</a></p></section></div><div class="mdc-dialog__backdrop"></div></aside>')
 	$('#settings-dialog-hp').after( $('.maintable > form') );
 }
 
@@ -373,6 +377,7 @@ function tilesUpdate() {
 	Cookies.set( 'materialWallpaperUrl', $('#wallpaper-input').val() );
 
 	parseKelvinSliderObject();
+	parseMJPEGObject();
 }
 
 function replaceLevelSliders() {
@@ -510,4 +515,51 @@ function setWallpaperShadow(bool) {
 	} else {
 		$('div.maintable').css('background-color', '');
 	}
+}
+
+function createMJPEGInput() {
+	var sliderGroup = document.createElement("div");
+	$(sliderGroup).addClass("mjpeg-group");
+	$(sliderGroup).append('<div class="mdc-text-field mjpeg-id-tf" data-mdc-auto-init="MDCTextField"><input type="text" class="mdc-text-field__input mjpeg-id-input"><label class="mdc-text-field__label">IDs to attach to</label><div class="mdc-line-ripple"></div></div>');
+	$(sliderGroup).append('<div class="mdc-text-field mjpeg-name-tf" data-mdc-auto-init="MDCTextField"><input type="text" class="mdc-text-field__input mjpeg-name-input"><label class="mdc-text-field__label">Tile name</label><div class="mdc-line-ripple"></div></div>');
+	$(sliderGroup).append('<div class="mdc-text-field mjpeg-url-tf" data-mdc-auto-init="MDCTextField"><input type="text" class="mdc-text-field__input mjpeg-url-input"><label class="mdc-text-field__label">Stream URL</label><div class="mdc-line-ripple"></div></div>');
+	$(sliderGroup).append('<div class="mdc-text-field mjpeg-width-tf" data-mdc-auto-init="MDCTextField"><input type="text" class="mdc-text-field__input mjpeg-width-input"><label class="mdc-text-field__label">Width</label><div class="mdc-line-ripple"></div></div>');
+	$(sliderGroup).append('<div class="button-default" onclick="removeKelvinInput(this);">-</div>');
+	$('#settings-dialog-mjpeg').after(sliderGroup);
+	window.mdc.autoInit();
+}
+
+function parseMJPEGObject() {
+	var MJPEGObjects = [];
+	$('.mjpeg-group').each(function() {
+		var currentMJPEGObject = {
+			ids: $(this).find('.mjpeg-id-input').val(),
+			url: $(this).find('.mjpeg-url-input').val(),
+			width: $(this).find('.mjpeg-width-input').val(),
+			name: $(this).find('.mjpeg-name-input').val()
+		}
+		MJPEGObjects.push( currentMJPEGObject );
+		addMJPEGImage( currentMJPEGObject );
+	});
+	Cookies.set( 'materialMJPEGObjects', JSON.stringify(MJPEGObjects) );
+}
+
+function addMJPEGImage(MJPEGObject) {
+	MJPEGObject.ids.split(',').forEach(function(element) {
+		if ( $('#'+element+' > img').length<1 ) {
+			$('#'+element).append('<img src="'+MJPEGObject.url+'" style="width: '+MJPEGObject.width+'"></img>');
+			$('#'+element).find('.thingname > span').text(MJPEGObject.name);
+		}
+	});
+}
+
+function parseMJPEGObjectFromJson(json) {
+	JSON.parse(json).forEach(function(element, index) {
+		createMJPEGInput();
+		$('.mjpeg-group').children(index).find('.mjpeg-id-input').val(element.ids);
+		$('.mjpeg-group').children(index).find('.mjpeg-url-input').val(element.url);
+		$('.mjpeg-group').children(index).find('.mjpeg-width-input').val(element.width);
+		$('.mjpeg-group').children(index).find('.mjpeg-name-input').val(element.name);
+		addMJPEGImage(element);
+	});
 }
