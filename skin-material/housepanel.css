@@ -1331,6 +1331,7 @@ div.frame iframe, div.frame-thing {
     /*width: 500px;
     height: 230px;
     background: none;*/
+    width: auto !important;
 }
 div.frame-thing {
     /*width: auto;
