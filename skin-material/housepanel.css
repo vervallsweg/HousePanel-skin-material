@@ -1375,14 +1375,14 @@ div.music.track {
 }
 
 div.overlay.battery, div.overlay.name {
-	position: absolute;
+	/*position: absolute;*/
 	z-index: 10;
-        border: none;
-        background: none;
+    border: none;
+    background: none;
 	/*left: 0px;*/
 	/*top: 2px;*/
 	/*width: 100%;*/
-	height: auto;
+	/*height: auto;*/
 }
 div.overlay.name {
     display: none;
@@ -1408,15 +1408,15 @@ div.ovStatus {
 
 div.battery {
   display: block;
-  position:relative;
+  /*position:relative;*/
   float: right;
-  right: 2px;
+  /*right: 2px;*/
   /*top: -11px;*/
   width: 24px;
   height: 8px;
   border: 1px solid #fff;
   border-radius: 2px;
-  padding: 1px;
+  /*padding: 1px;*/
   transform: scale(0.8);
 }
 
@@ -1578,7 +1578,7 @@ div.weather-thing div.overlay {
 
 /* Styling */
 .overlay.light, .overlay.music, .overlay.music-controls-fixed, .overlay.musicmute, .overlay.bulb, .overlay.thermostat, .overlay.thermofan,
-.overlay.thermomode, .overlay.thermostate, .overlay.energy, .overlay.power, .overlay.level, .overlay.colorTemperature  {
+.overlay.thermomode, .overlay.thermostate, .overlay.energy, .overlay.power, .overlay.level, .overlay.colorTemperature, .overlay.battery  {
     background-color: white;
     color: #757575;
     padding: 0.25em 0 0 0;
