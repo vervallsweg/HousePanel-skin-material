@@ -49,6 +49,7 @@ $.getScript("https://unpkg.com/material-components-web@latest/dist/material-comp
 		tilesUpdate();
 	});
 
+	addInlineRefreshButton();
 	replaceLevelSliders();
 
 	if ( Cookies.get('materialKelvinSliderObjects') ) {
@@ -547,10 +548,23 @@ function parseMJPEGObject() {
 function addMJPEGImage(MJPEGObject) {
 	MJPEGObject.ids.split(',').forEach(function(element) {
 		if ( $('#'+element+' > img').length<1 ) {
-			$('#'+element).append('<img src="'+MJPEGObject.url+'" style="width: '+MJPEGObject.width+'"></img>');
-			$('#'+element).find('.thingname > span').text(MJPEGObject.name);
+			$('#'+element).append('<img src="'+MJPEGObject.url+'" style="width: '+MJPEGObject.width+'; margin-bottom: -0.25em;" ondblclick="reloadMJPEGImage(this);"></img>');
+			if (MJPEGObject.name != '') {
+				$('#'+element).find('.thingname > span').text(MJPEGObject.name);
+			} else {
+				$('#'+element).find('.thingname').css('display', 'none');
+			}
+			
 		}
 	});
+	window.mdc.autoInit();
+}
+
+function reloadMJPEGImage(img) {
+	var data = { src: $(img).attr('src'), width: img.style.width };
+	var parent = $(img).parent();
+	$(img).remove();
+	$(parent).append('<img src="'+data.src+'" style="width: '+data.width+'" ondblclick="reloadMJPEGImage(this);"></img>');
 }
 
 function parseMJPEGObjectFromJson(json) {
@@ -562,4 +576,27 @@ function parseMJPEGObjectFromJson(json) {
 		$('.mjpeg-group').children(index).find('.mjpeg-name-input').val(element.name);
 		addMJPEGImage(element);
 	});
+}
+
+function addInlineRefreshButton() {
+	$('#roomtabs').append('<div id="inline-reload-button"><i class="mdc-icon-toggle material-icons" role="button" aria-pressed="false" aria-label="Add to favorites" tabindex="0" data-mdc-auto-init="MDCIconToggle" onclick="refreshAllDevices();">refresh</i></div>');
+}
+
+function refreshAllDevices() {
+	$('#inline-reload-button').empty();
+	$('#inline-reload-button').append('<main><svg class="mdc-circular-progress" viewBox="25 25 50 50"><circle class="mdc-circular-progress__path" cx="50" cy="50" r="20" fill="none" stroke-width="2" stroke-miterlimit="10"/</main>').hide().fadeIn(250);
+	$('.thing').each(function() {
+		console.log( 'bid: '+$(this).attr('bid')+', aid: '+$(this).attr('id').split('-')[1]+', type: ' + $(this).attr('type') );
+		refreshTile( $(this).attr('id').split('-')[1], $(this).attr('bid'), $(this).attr('type') );
+	});
+	setTimeout(function() {
+		$('#inline-reload-button').empty();
+		$('#inline-reload-button').append('<i class="mdc-icon-toggle material-icons" role="button" aria-pressed="false" aria-label="Add to favorites" tabindex="0" data-mdc-auto-init="MDCIconToggle">check</i>').hide().fadeIn(1000);
+		window.mdc.autoInit();
+		setTimeout(function() {
+			$('#inline-reload-button').empty();
+			$('#inline-reload-button').append('<i class="mdc-icon-toggle material-icons" role="button" aria-pressed="false" aria-label="Add to favorites" tabindex="0" data-mdc-auto-init="MDCIconToggle" onclick="refreshAllDevices();">refresh</i>').hide().fadeIn(1000);
+			window.mdc.autoInit();
+		}, 3000);	
+	}, 15000);
 }

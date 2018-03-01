@@ -1802,3 +1802,63 @@ div.switch.power, div.switch.energy {
 .mdc-switch-label {
     margin: 0 0.5em;
 }
+
+#inline-reload-button {
+    color: #757575;
+    display: inline-block;
+    float: right;
+    margin: 0 2em 0 0;
+    width: 3.5em;
+    height: 3.5em;
+}
+
+#inline-reload-button > i {
+    color: #757575;
+}
+
+/* MDC Circular progress */
+main {
+    /*display: flex;
+    align-items: center;
+    justify-content: center;*/
+    padding: 0.85em;
+}
+
+@keyframes rotate {
+  100% {
+    transform: rotate(360deg);
+  }
+}
+
+@keyframes dash {
+  0% {
+    stroke-dasharray: 1, 200;
+    stroke-dashoffset: 0;
+  }
+
+  50% {
+    stroke-dasharray: 89, 200;
+    stroke-dashoffset: -35;
+  }
+
+  100% {
+    stroke-dasharray: 89, 200;
+    stroke-dashoffset: -124;
+  }
+}
+
+.mdc-circular-progress {
+    /*position: relative;
+    width: 100px;
+    height: 100px;*/
+    animation: rotate 2s linear infinite;
+}
+
+.mdc-circular-progress__path {
+    stroke-dasharray: 1, 200;
+    stroke-dashoffset: 0;
+    animation: dash 1.5s ease-in-out infinite, color 6s ease-in-out infinite;
+    stroke-linecap: round;
+    stroke: #757575;
+    stroke-width: 0.3em;
+}
