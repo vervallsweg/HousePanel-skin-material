@@ -156,7 +156,7 @@ function toggleStatusPresence(presence) {
 function toggleStatusMusicStatus(musicStatus) {
 	var parent = $(musicStatus).parent().parent();
 
-	if ( $(musicStatus).hasClass("playing") || $(musicStatus).text()=="group" ) {
+	if ( $(musicStatus).hasClass("playing") || $(musicStatus).text()=="playing" || $(musicStatus).text()=="group" ) {
 		console.log('toggleStatusMusicStatus(): active');
 		if ( $(musicStatus).text()=="group" ) {
 			if ( !$(musicStatus).hasClass("group") ) {
