@@ -392,7 +392,9 @@ function replaceLevelSliders() {
 		var initVal = $(this).parent().find('.ui-slider').attr('value')
 		if (initVal>100) {initVal=initVal/100};
 		levelSlider.value = initVal; //Get from actual slider
-		levelSlider.listen('MDCSlider:change', () => syncLevelSliders( levelSlider.root_ )); //MDC bug: fires twice for each value change 
+        //levelSlider.listen('MDCSlider:change', () => syncLevelSliders( levelSlider.root_ )); //MDC bug: fires twice for each value change 
+                var x = null; //WTF, y?
+		levelSlider.listen('MDCSlider:change', (x) => syncLevelSliders( levelSlider.root_ )); //MDC bug: fires twice for each value change 
 	});
 
 	$('.overlay.level > .ui-slider').each(function() {
