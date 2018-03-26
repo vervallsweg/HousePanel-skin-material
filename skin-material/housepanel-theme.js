@@ -50,15 +50,18 @@ $.getScript("https://unpkg.com/material-components-web@latest/dist/material-comp
 	});
 
 	addInlineRefreshButton();
-	replaceLevelSliders();
 
-	if ( Cookies.get('materialKelvinSliderObjects') ) {
-		parseKelvinSliderObjectFromJson( Cookies.get('materialKelvinSliderObjects') );
-	} //Coz we're editing MDC inputs from cookies, mdc stuff needs to be loaded
+	$(window).bind("load", function() { //Fixing weird new js load bug, where original HP sliders are created after -theme.js execution
+		replaceLevelSliders();
 
-	if ( Cookies.get('materialMJPEGObjects') ) {
-		parseMJPEGObjectFromJson( Cookies.get('materialMJPEGObjects') );
-	}
+		if ( Cookies.get('materialKelvinSliderObjects') ) {
+			parseKelvinSliderObjectFromJson( Cookies.get('materialKelvinSliderObjects') );
+		} //Coz we're editing MDC inputs from cookies, mdc stuff needs to be loaded
+
+		if ( Cookies.get('materialMJPEGObjects') ) {
+			parseMJPEGObjectFromJson( Cookies.get('materialMJPEGObjects') );
+		}
+	});
 });
 
 $('head').append( $('<link rel="stylesheet" type="text/css" />').attr('href', 'https://fonts.googleapis.com/icon?family=Material+Icons') );
@@ -161,20 +164,35 @@ function toggleStatusMusicStatus(musicStatus) {
 		if ( $(musicStatus).text()=="group" ) {
 			if ( !$(musicStatus).hasClass("group") ) {
 				$(musicStatus).addClass("group");
+				$(musicStatus).unbind( 'click' );
+				$(musicStatus).on( 'click', function() { musicStatusPlay(musicStatus) } );
 			}
 		}
 		if ( !$(parent).hasClass("thing-on") ) {
 			console.log('toggleStatusMusicStatus(): setting thing-on');
 			$(parent).removeClass('thing-off').addClass("thing-on")
+			$(musicStatus).unbind( 'click' );
+			$(musicStatus).on( 'click', function() { musicStatusPause(musicStatus) } );
 		}
 	}
 	if ( $(musicStatus).hasClass("paused") || $(musicStatus).hasClass("stopped") || $(musicStatus).hasClass("Ready") ) {
 		console.log('toggleStatusMusicStatus(): nActive');
 		if ( !$(parent).hasClass("thing-off") ) {
+			$(musicStatus).unbind( 'click' );
+			$(musicStatus).on( 'click', function() { musicStatusPlay(musicStatus) } );
 			console.log('toggleStatusMusicStatus(): setting thing-off');
 			$(parent).removeClass('thing-on').addClass("thing-off")
 		}
 	}
+}
+
+function musicStatusPlay(musicStatus) {
+	//console.log( $(musicStatus).parent().parent().find('.overlay.music-controls') );
+	$(musicStatus).parent().parent().find('.overlay.music-controls > .music-play').trigger('click');
+}
+
+function musicStatusPause(musicStatus) {
+	$(musicStatus).parent().parent().find('.overlay.music-controls > .music-pause').trigger('click');
 }
 
 function toggleMuteMusicMute(musicMute) {
