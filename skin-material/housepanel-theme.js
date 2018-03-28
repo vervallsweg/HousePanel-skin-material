@@ -26,6 +26,7 @@ $.getScript("https://cdn.jsdelivr.net/npm/js-cookie@2/src/js.cookie.min.js", fun
 		hideBackgroundColor( (Cookies.get('materialHideBackroundColor') == 'true') );
 		document.getElementById('hide-background-color-switch').checked = (Cookies.get('materialHideBackroundColor') == 'true');
 	}
+	syncBackgroundColors();
 	if ( Cookies.get('materialWallpaperShadow')=='true' || Cookies.get('materialWallpaperShadow')=='false' ) {
 		setWallpaperShadow( (Cookies.get('materialWallpaperShadow') == 'true') );
 		document.getElementById('wallpaper-shadow-switch').checked = (Cookies.get('materialWallpaperShadow') == 'true');
@@ -88,6 +89,7 @@ $( document ).ready(function() {
 	toggles.each(function() {
 		toggleStatusToggle(this);
 	 	$(this).on( 'DOMSubtreeModified', function() {
+	 		syncBackgroundColors();
 	 		toggleStatusToggle(this);
 	 	});
 	});
@@ -262,6 +264,31 @@ function hideBackgroundColor(bool) {
 	}
 }
 
+function syncBackgroundColors() {
+	$('.overlay.bulb.hue').each(function(index, element){
+		var currentElement = $(element).find('.hue-val');
+		if (Cookies.get('materialHideBackroundColor')=='true') {
+			currentElement.css('background-color', 'rgb(255, 255, 255)');
+			currentElement.css('color', '#757575');
+		}
+		if (currentElement.css('background-color')!='rgb(255, 255, 255)') {
+			currentElement.css('color', currentElement.css('background-color'));
+			currentElement.css('background-color', 'rgb(255, 255, 255)');
+		}
+	});
+	$('.overlay.bulb.saturation').each(function(index, element){
+		var currentElement = $(element).find('.saturation-val');
+		if (Cookies.get('materialHideBackroundColor')=='true') {
+			currentElement.css('background-color', 'rgb(255, 255, 255)');
+			currentElement.css('color', '#757575');
+		}
+		if (currentElement.css('background-color')!='rgb(255, 255, 255)') {
+			currentElement.css('color', currentElement.css('background-color'));
+			currentElement.css('background-color', 'rgb(255, 255, 255)');
+		}
+	});
+}
+
 function addFullScreenButton() {
 	$('#settings-dialog-display').after('<div class="button-default" onClick="enterFullscreen(document.documentElement);">Fullscreen</div>')
 	$('#settings-dialog-display').after('<div class="button-default" onClick="exitFullscreen();">Exit fullscreen</div>')
@@ -354,7 +381,7 @@ function zoomOutTiles() {
 function zoomResetTiles() {
 	$('.thing').css('width', '12em');
 	$('#settings-dialog-zoom-tiles-current').text( ( Math.round((document.querySelector('.thing').style.width.split("em")[0])*10) ) + "%" )
-	Cookies.set( 'materialZoomTiles', document.querySelector('.thing').style.width )
+	Cookies.remove( 'materialZoomTiles' );
 }
 
 function addFab() {
@@ -385,7 +412,6 @@ function addTilesUpdateButton() {
 function tilesUpdate() {
 	setHeatingOnlyHeaters( $('#heater-only-input').val().split(',') );
 	setSwitchOnlySwitches( $('#switch-only-input').val().split(',') );
-	hideBackgroundColor( document.getElementById('hide-background-color-switch').checked );
 	setWallpaperShadow( document.getElementById('wallpaper-shadow-switch').checked );
 	$('body').css('background-image', 'url('+ $('#wallpaper-input').val() +')');
 
@@ -397,6 +423,7 @@ function tilesUpdate() {
 
 	parseKelvinSliderObject();
 	parseMJPEGObject();
+	syncBackgroundColors();
 }
 
 function replaceLevelSliders() {
