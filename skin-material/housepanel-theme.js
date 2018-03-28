@@ -1,5 +1,5 @@
 var MDCDialog, MDCSlider, textFieldWallpaper, settingsDialog;
-var thisVersion = '1.0.0';
+var thisVersion = '1.0.1';
 
 $.getScript("https://cdn.jsdelivr.net/npm/js-cookie@2/src/js.cookie.min.js", function() {
 	if ( Cookies.get('materialZoomMain') ) {
@@ -26,6 +26,7 @@ $.getScript("https://cdn.jsdelivr.net/npm/js-cookie@2/src/js.cookie.min.js", fun
 		hideBackgroundColor( (Cookies.get('materialHideBackroundColor') == 'true') );
 		document.getElementById('hide-background-color-switch').checked = (Cookies.get('materialHideBackroundColor') == 'true');
 	}
+	syncBackgroundColors();
 	if ( Cookies.get('materialWallpaperShadow')=='true' || Cookies.get('materialWallpaperShadow')=='false' ) {
 		setWallpaperShadow( (Cookies.get('materialWallpaperShadow') == 'true') );
 		document.getElementById('wallpaper-shadow-switch').checked = (Cookies.get('materialWallpaperShadow') == 'true');
@@ -49,15 +50,19 @@ $.getScript("https://unpkg.com/material-components-web@latest/dist/material-comp
 		tilesUpdate();
 	});
 
-	replaceLevelSliders();
+	addInlineRefreshButton();
 
-	if ( Cookies.get('materialKelvinSliderObjects') ) {
-		parseKelvinSliderObjectFromJson( Cookies.get('materialKelvinSliderObjects') );
-	} //Coz we're editing MDC inputs from cookies, mdc stuff needs to be loaded
+	$(window).bind("load", function() { //Fixing weird new js load bug, where original HP sliders are created after -theme.js execution
+		replaceLevelSliders();
 
-	if ( Cookies.get('materialMJPEGObjects') ) {
-		parseMJPEGObjectFromJson( Cookies.get('materialMJPEGObjects') );
-	}
+		if ( Cookies.get('materialKelvinSliderObjects') ) {
+			parseKelvinSliderObjectFromJson( Cookies.get('materialKelvinSliderObjects') );
+		} //Coz we're editing MDC inputs from cookies, mdc stuff needs to be loaded
+
+		if ( Cookies.get('materialMJPEGObjects') ) {
+			parseMJPEGObjectFromJson( Cookies.get('materialMJPEGObjects') );
+		}
+	});
 });
 
 $('head').append( $('<link rel="stylesheet" type="text/css" />').attr('href', 'https://fonts.googleapis.com/icon?family=Material+Icons') );
@@ -84,6 +89,7 @@ $( document ).ready(function() {
 	toggles.each(function() {
 		toggleStatusToggle(this);
 	 	$(this).on( 'DOMSubtreeModified', function() {
+	 		syncBackgroundColors();
 	 		toggleStatusToggle(this);
 	 	});
 	});
@@ -155,25 +161,40 @@ function toggleStatusPresence(presence) {
 function toggleStatusMusicStatus(musicStatus) {
 	var parent = $(musicStatus).parent().parent();
 
-	if ( $(musicStatus).hasClass("playing") || $(musicStatus).text()=="group" ) {
+	if ( $(musicStatus).hasClass("playing") || $(musicStatus).text()=="playing" || $(musicStatus).text()=="group" ) {
 		console.log('toggleStatusMusicStatus(): active');
 		if ( $(musicStatus).text()=="group" ) {
 			if ( !$(musicStatus).hasClass("group") ) {
 				$(musicStatus).addClass("group");
+				$(musicStatus).unbind( 'click' );
+				$(musicStatus).on( 'click', function() { musicStatusPlay(musicStatus) } );
 			}
 		}
 		if ( !$(parent).hasClass("thing-on") ) {
 			console.log('toggleStatusMusicStatus(): setting thing-on');
 			$(parent).removeClass('thing-off').addClass("thing-on")
+			$(musicStatus).unbind( 'click' );
+			$(musicStatus).on( 'click', function() { musicStatusPause(musicStatus) } );
 		}
 	}
 	if ( $(musicStatus).hasClass("paused") || $(musicStatus).hasClass("stopped") || $(musicStatus).hasClass("Ready") ) {
 		console.log('toggleStatusMusicStatus(): nActive');
 		if ( !$(parent).hasClass("thing-off") ) {
+			$(musicStatus).unbind( 'click' );
+			$(musicStatus).on( 'click', function() { musicStatusPlay(musicStatus) } );
 			console.log('toggleStatusMusicStatus(): setting thing-off');
 			$(parent).removeClass('thing-on').addClass("thing-off")
 		}
 	}
+}
+
+function musicStatusPlay(musicStatus) {
+	//console.log( $(musicStatus).parent().parent().find('.overlay.music-controls') );
+	$(musicStatus).parent().parent().find('.overlay.music-controls > .music-play').trigger('click');
+}
+
+function musicStatusPause(musicStatus) {
+	$(musicStatus).parent().parent().find('.overlay.music-controls > .music-pause').trigger('click');
 }
 
 function toggleMuteMusicMute(musicMute) {
@@ -241,6 +262,31 @@ function hideBackgroundColor(bool) {
 	if (bool) {
 		$('.overlay').find('div').css('background-color', '');
 	}
+}
+
+function syncBackgroundColors() {
+	$('.overlay.bulb.hue').each(function(index, element){
+		var currentElement = $(element).find('.hue-val');
+		if (Cookies.get('materialHideBackroundColor')=='true') {
+			currentElement.css('background-color', 'rgb(255, 255, 255)');
+			currentElement.css('color', '#757575');
+		}
+		if (currentElement.css('background-color')!='rgb(255, 255, 255)') {
+			currentElement.css('color', currentElement.css('background-color'));
+			currentElement.css('background-color', 'rgb(255, 255, 255)');
+		}
+	});
+	$('.overlay.bulb.saturation').each(function(index, element){
+		var currentElement = $(element).find('.saturation-val');
+		if (Cookies.get('materialHideBackroundColor')=='true') {
+			currentElement.css('background-color', 'rgb(255, 255, 255)');
+			currentElement.css('color', '#757575');
+		}
+		if (currentElement.css('background-color')!='rgb(255, 255, 255)') {
+			currentElement.css('color', currentElement.css('background-color'));
+			currentElement.css('background-color', 'rgb(255, 255, 255)');
+		}
+	});
 }
 
 function addFullScreenButton() {
@@ -335,7 +381,7 @@ function zoomOutTiles() {
 function zoomResetTiles() {
 	$('.thing').css('width', '12em');
 	$('#settings-dialog-zoom-tiles-current').text( ( Math.round((document.querySelector('.thing').style.width.split("em")[0])*10) ) + "%" )
-	Cookies.set( 'materialZoomTiles', document.querySelector('.thing').style.width )
+	Cookies.remove( 'materialZoomTiles' );
 }
 
 function addFab() {
@@ -366,7 +412,6 @@ function addTilesUpdateButton() {
 function tilesUpdate() {
 	setHeatingOnlyHeaters( $('#heater-only-input').val().split(',') );
 	setSwitchOnlySwitches( $('#switch-only-input').val().split(',') );
-	hideBackgroundColor( document.getElementById('hide-background-color-switch').checked );
 	setWallpaperShadow( document.getElementById('wallpaper-shadow-switch').checked );
 	$('body').css('background-image', 'url('+ $('#wallpaper-input').val() +')');
 
@@ -378,6 +423,7 @@ function tilesUpdate() {
 
 	parseKelvinSliderObject();
 	parseMJPEGObject();
+	syncBackgroundColors();
 }
 
 function replaceLevelSliders() {
@@ -391,7 +437,9 @@ function replaceLevelSliders() {
 		var initVal = $(this).parent().find('.ui-slider').attr('value')
 		if (initVal>100) {initVal=initVal/100};
 		levelSlider.value = initVal; //Get from actual slider
-		levelSlider.listen('MDCSlider:change', () => syncLevelSliders( levelSlider.root_ )); //MDC bug: fires twice for each value change 
+        //levelSlider.listen('MDCSlider:change', () => syncLevelSliders( levelSlider.root_ )); //MDC bug: fires twice for each value change 
+                var x = null; //WTF, y?
+		levelSlider.listen('MDCSlider:change', (x) => syncLevelSliders( levelSlider.root_ )); //MDC bug: fires twice for each value change 
 	});
 
 	$('.overlay.level > .ui-slider').each(function() {
@@ -547,10 +595,23 @@ function parseMJPEGObject() {
 function addMJPEGImage(MJPEGObject) {
 	MJPEGObject.ids.split(',').forEach(function(element) {
 		if ( $('#'+element+' > img').length<1 ) {
-			$('#'+element).append('<img src="'+MJPEGObject.url+'" style="width: '+MJPEGObject.width+'"></img>');
-			$('#'+element).find('.thingname > span').text(MJPEGObject.name);
+			$('#'+element).append('<img src="'+MJPEGObject.url+'" style="width: '+MJPEGObject.width+'; margin-bottom: -0.25em;" ondblclick="reloadMJPEGImage(this);"></img>');
+			if (MJPEGObject.name != '') {
+				$('#'+element).find('.thingname > span').text(MJPEGObject.name);
+			} else {
+				$('#'+element).find('.thingname').css('display', 'none');
+			}
+			
 		}
 	});
+	window.mdc.autoInit();
+}
+
+function reloadMJPEGImage(img) {
+	var data = { src: $(img).attr('src'), width: img.style.width };
+	var parent = $(img).parent();
+	$(img).remove();
+	$(parent).append('<img src="'+data.src+'" style="width: '+data.width+'" ondblclick="reloadMJPEGImage(this);"></img>');
 }
 
 function parseMJPEGObjectFromJson(json) {
@@ -562,4 +623,27 @@ function parseMJPEGObjectFromJson(json) {
 		$('.mjpeg-group').children(index).find('.mjpeg-name-input').val(element.name);
 		addMJPEGImage(element);
 	});
+}
+
+function addInlineRefreshButton() {
+	$('#roomtabs').append('<div id="inline-reload-button"><i class="mdc-icon-toggle material-icons" role="button" aria-pressed="false" aria-label="Add to favorites" tabindex="0" data-mdc-auto-init="MDCIconToggle" onclick="refreshAllDevices();">refresh</i></div>');
+}
+
+function refreshAllDevices() {
+	$('#inline-reload-button').empty();
+	$('#inline-reload-button').append('<main><svg class="mdc-circular-progress" viewBox="25 25 50 50"><circle class="mdc-circular-progress__path" cx="50" cy="50" r="20" fill="none" stroke-width="2" stroke-miterlimit="10"/</main>').hide().fadeIn(250);
+	$('.thing').each(function() {
+		console.log( 'bid: '+$(this).attr('bid')+', aid: '+$(this).attr('id').split('-')[1]+', type: ' + $(this).attr('type') );
+		refreshTile( $(this).attr('id').split('-')[1], $(this).attr('bid'), $(this).attr('type') );
+	});
+	setTimeout(function() {
+		$('#inline-reload-button').empty();
+		$('#inline-reload-button').append('<i class="mdc-icon-toggle material-icons" role="button" aria-pressed="false" aria-label="Add to favorites" tabindex="0" data-mdc-auto-init="MDCIconToggle">check</i>').hide().fadeIn(1000);
+		window.mdc.autoInit();
+		setTimeout(function() {
+			$('#inline-reload-button').empty();
+			$('#inline-reload-button').append('<i class="mdc-icon-toggle material-icons" role="button" aria-pressed="false" aria-label="Add to favorites" tabindex="0" data-mdc-auto-init="MDCIconToggle" onclick="refreshAllDevices();">refresh</i>').hide().fadeIn(1000);
+			window.mdc.autoInit();
+		}, 3000);	
+	}, 15000);
 }

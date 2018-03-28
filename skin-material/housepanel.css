@@ -40,6 +40,11 @@ div {
 	-o-background-size: contain;
 }
 
+/* fix the minicolors panel */
+div.minicolors-panel div {
+	background-size: auto;
+}
+
 :focus {
     outline: none;
 }
@@ -683,9 +688,9 @@ div.switch.energy {
 div.switchlevel.switch, div.bulb.switch {
     /*height: 80px;*/
 }
-div.switchlevel.level, switchlevel.colorTemperature, switchlevel.hue, switchlevel.saturation {
+/*div.switchlevel.level, switchlevel.colorTemperature, switchlevel.hue, switchlevel.saturation {
     height: 32px;
-}
+}*/
 
 /* momentary styling */
 div.momentary.off{
@@ -949,7 +954,7 @@ div.thing.weather-thing, div.weather {
 div.thing.weather-thing {
     background-color: rgba(50,50,50,0.4);
     width: 240px;
-    height: 330px;
+    height: auto;
 }
 div.weather.temperature, div.weather.feelsLike {
     display: inline-block;
@@ -1018,7 +1023,7 @@ div.weather.weatherIcon, div.weather.forecastIcon {
 div.thing.blank-thing {
     border: 0px none;
     padding: 0;
-    /*background-color: rgba(255,255,255,0.01);*/
+    background-color: rgba(255,255,255,0.01);
     color: #ffffff;
     box-shadow: none;
     width: auto;
@@ -1144,14 +1149,15 @@ div.presence.absent {
 }
 
 div.bulb.color {
+    display: none;
     /* background-size: 32px 32px;
     font-size: 1px; */
-    background-image: url(icons/sprites/color-picker.svg);
+/*    background-image: url(icons/sprites/color-picker.svg);
     height: 2em;
     width: 2em;
     color: rgba(128,128,128,0.01);
     float: left;
-    margin: 0 0 0 0.5em;
+    margin: 0 0 0 0.5em;*/
 }
 
 /* do not display these items */
@@ -1762,7 +1768,7 @@ div.switch.power, div.switch.energy {
 }
 
 .musicstatus .playing {
-    background-image: url(icons/sprites/play.svg);
+    background-image: url(icons/sprites/pause.svg);
 }
 
 .musicstatus .stopped {
@@ -1774,7 +1780,7 @@ div.switch.power, div.switch.energy {
 }
 
 .musicstatus .paused {
-    background-image: url(icons/sprites/pause.svg);
+    background-image: url(icons/sprites/play.svg);
 }
 
 /* Reset jquery radius*/
@@ -1809,4 +1815,89 @@ div.switch.power, div.switch.energy {
 
 .mdc-switch-label {
     margin: 0 0.5em;
+}
+
+#inline-reload-button {
+    color: #757575;
+    display: inline-block;
+    float: right;
+    margin: 0 2em 0 0;
+    width: 3.5em;
+    height: 3.5em;
+}
+
+#inline-reload-button > i {
+    color: #757575;
+}
+
+/* MDC Circular progress */
+main {
+    /*display: flex;
+    align-items: center;
+    justify-content: center;*/
+    padding: 0.85em;
+}
+
+@keyframes rotate {
+  100% {
+    transform: rotate(360deg);
+  }
+}
+
+@keyframes dash {
+  0% {
+    stroke-dasharray: 1, 200;
+    stroke-dashoffset: 0;
+  }
+
+  50% {
+    stroke-dasharray: 89, 200;
+    stroke-dashoffset: -35;
+  }
+
+  100% {
+    stroke-dasharray: 89, 200;
+    stroke-dashoffset: -124;
+  }
+}
+
+.mdc-circular-progress {
+    /*position: relative;
+    width: 100px;
+    height: 100px;*/
+    animation: rotate 2s linear infinite;
+}
+
+.mdc-circular-progress__path {
+    stroke-dasharray: 1, 200;
+    stroke-dashoffset: 0;
+    animation: dash 1.5s ease-in-out infinite, color 6s ease-in-out infinite;
+    stroke-linecap: round;
+    stroke: #757575;
+    stroke-width: 0.3em;
+}
+
+.minicolors-theme-default .minicolors-swatch {
+    /* top: 20px; */
+    /* left: 40px; */
+    width: 2em;
+    height: 2em;
+    left: 3.5em;
+    top: 4.5em;
+    border-radius: 50%;
+    cursor: pointer;
+    position: relative;
+}
+
+.overlay.color {
+    height: 0;
+}
+
+.minicolors-swatch-color {
+  border-radius: 50%;
+}
+
+.minicolors-position-left .minicolors-panel {
+    left: -60px;
+    top: -20px;
 }
