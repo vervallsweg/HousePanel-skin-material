@@ -8,4 +8,4 @@ All credit go to Ken Washington, since this is an edited version of his skin-hou
 2. Open settings and type skin-material into the `Skin directory name` text box
 
 ## Latest version
-1.0.0
+1.0.1

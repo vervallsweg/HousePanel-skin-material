@@ -1,5 +1,5 @@
 var MDCDialog, MDCSlider, textFieldWallpaper, settingsDialog;
-var thisVersion = '1.0.0';
+var thisVersion = '1.0.1';
 
 $.getScript("https://cdn.jsdelivr.net/npm/js-cookie@2/src/js.cookie.min.js", function() {
 	if ( Cookies.get('materialZoomMain') ) {
