@@ -36,7 +36,7 @@ $.getScript("https://cdn.jsdelivr.net/npm/js-cookie@2/src/js.cookie.min.js", fun
 		$('#wallpaper-input').val( Cookies.get('materialWallpaperUrl') );
 	}
 });
-$.getScript("https://unpkg.com/material-components-web@latest/dist/material-components-web.js", function() {
+$.getScript("https://unpkg.com/material-components-web@0.33.0/dist/material-components-web.js", function() {
 	MDCDialog = mdc.dialog.MDCDialog;
 	MDCSlider = mdc.slider.MDCSlider;
 
@@ -66,7 +66,7 @@ $.getScript("https://unpkg.com/material-components-web@latest/dist/material-comp
 });
 
 $('head').append( $('<link rel="stylesheet" type="text/css" />').attr('href', 'https://fonts.googleapis.com/icon?family=Material+Icons') );
-$('head').append( $('<link rel="stylesheet" type="text/css" />').attr('href', 'https://unpkg.com/material-components-web@latest/dist/material-components-web.css') );
+$('head').append( $('<link rel="stylesheet" type="text/css" />').attr('href', 'https://unpkg.com/material-components-web@0.33.0/dist/material-components-web.css') );
 
 $( document ).ready(function() {
 	var toggles = $('.on, .off');
